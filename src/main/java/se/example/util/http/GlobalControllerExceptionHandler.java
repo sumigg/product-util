@@ -3,6 +3,7 @@ package se.example.util.http;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import se.example.api.exception.BadRequestException;
 import se.example.api.exception.InvalidInputException;
 import se.example.api.exception.NotFoundException;
 
@@ -18,6 +20,14 @@ import se.example.api.exception.NotFoundException;
 @RestControllerAdvice
 public class GlobalControllerExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
+
+  @ResponseStatus(BAD_REQUEST)
+  @ExceptionHandler(BadRequestException.class)
+  public @ResponseBody HttpErrorInfo handleBadRequestExceptions(
+    ServerHttpRequest request, BadRequestException ex) {
+
+    return createHttpErrorInfo(BAD_REQUEST, request, ex);
+  }
 
   @ResponseStatus(NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
